@@ -1,0 +1,32 @@
+[
+    {
+        "purchase_date": "2026-05-24",
+        "product_id": "Maçã",
+        "quantity": 1.234,
+        "unit_price": 6.52,
+        "product_price": 8.04,
+        "market_id" : "Atacadão",
+        "access_key": "35240612345678000190650010000012341123456789",
+        "nfce_url": "https://www.nfce.fazenda.sp.gov.br/consulta?p=35240612345678000190650010000012341123456789|2|1|1|abcdef0123456789abcdef0123456789abcdef01"
+    },
+    {
+        "purchase_date": "2026-05-24",
+        "product_id": "Refrigerante",
+        "quantity": 3,
+        "unit_price": 5.79,
+        "product_price": 17.37,
+        "market_id" : "Atacadão",
+        "access_key": "35240612345678000190650010000012341123456789",
+        "nfce_url": "https://www.nfce.fazenda.sp.gov.br/consulta?p=35240612345678000190650010000012341123456789|2|1|1|abcdef0123456789abcdef0123456789abcdef01"
+    },
+    {
+        "purchase_date": "2026-05-24",
+        "product_id": "Queijo",
+        "quantity": 1,
+        "unit_price": 15.67,
+        "product_price": 15.67,
+        "market_id" : "Atacadão",
+        "access_key": "35240612345678000190650010000012341123456789",
+        "nfce_url": "https://www.nfce.fazenda.sp.gov.br/consulta?p=35240612345678000190650010000012341123456789|2|1|1|abcdef0123456789abcdef0123456789abcdef01"
+    }
+]
