@@ -1,16 +1,16 @@
 # %%
-import os
-
 import dotenv
 from google import genai
 from google.genai import types
+
+from src.env import getenv
 
 dotenv.load_dotenv()
 
 
 def generate(prompt, img, mime_type):
     client = genai.Client(
-        api_key=os.getenv("GEMINI_API_KEY"),
+        api_key=getenv("GEMINI_API_KEY"),
     )
 
     model = "gemini-3.1-flash-lite"
