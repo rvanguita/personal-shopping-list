@@ -120,6 +120,9 @@ Crie o arquivo local de ambiente a partir do exemplo e preencha as credenciais:
 cp .env.example .env
 ```
 
+> **Importante:** no `.env`, todos os valores devem estar entre aspas duplas,
+> por exemplo `MYSQL_HOST="localhost"`.
+
 | Variável | Finalidade |
 |---|---|
 | `MYSQL_HOST` | Host do servidor MySQL |
