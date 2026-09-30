@@ -3,14 +3,14 @@ Database manager for the Medallion Architecture.
 Manages connections to the 3 databases: raw, bronze, silver.
 """
 
-import os
-
 import sqlalchemy
 
-USER = os.getenv("MYSQL_USER")
-PASSWORD = os.getenv("MYSQL_PASSWORD")
-HOST = os.getenv("MYSQL_HOST")
-PORT = int(os.getenv("MYSQL_PORT", "3306"))
+from shopping_list.env import getenv
+
+USER = getenv("MYSQL_USER")
+PASSWORD = getenv("MYSQL_PASSWORD")
+HOST = getenv("MYSQL_HOST")
+PORT = int(getenv("MYSQL_PORT", "3306"))
 
 DATABASES = ["raw", "bronze", "silver"]
 
@@ -74,7 +74,7 @@ class DatabaseManager:
 
     def create_all_tables(self):
         """Cria todas as tabelas nos databases correspondentes."""
-        from src.models import (
+        from shopping_list.models import (
             BronzePurchase,
             RawPurchase,
             SilverMarketStats,

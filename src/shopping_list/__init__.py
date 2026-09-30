@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from shopping-list!")
+"""Backend compartilhado: banco, pipeline ETL, OCR Gemini e análises (sem UI)."""
