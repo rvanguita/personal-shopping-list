@@ -1,11 +1,7 @@
-# %%
-import dotenv
 from google import genai
 from google.genai import types
 
-from src.env import getenv
-
-dotenv.load_dotenv()
+from shopping_list.env import getenv
 
 
 def generate(prompt, img, mime_type):
@@ -38,6 +34,3 @@ def generate(prompt, img, mime_type):
     )
 
     return response
-
-
-# %%

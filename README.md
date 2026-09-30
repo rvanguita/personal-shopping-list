@@ -1,7 +1,13 @@
 # Shopping List Intelligence
 
-Uma aplicação Streamlit para transformar notas fiscais e arquivos CSV em um
-histórico estruturado de compras, indicadores de preço e sugestões de reposição.
+Transforma notas fiscais e arquivos CSV em um histórico estruturado de compras,
+indicadores de preço e sugestões de reposição. O projeto tem duas interfaces
+sobre o mesmo backend:
+
+- **Streamlit** (`app/streamlit`, pt-BR): importação por OCR/CSV, edição dos
+  dados e análises;
+- **Dash** (`app/dash`, inglês, tema escuro): dashboard analítico somente
+  leitura (lista de compras, preços, mercados e tendências).
 
 O projeto combina OCR com Google Gemini, um pipeline de dados em arquitetura
 medalhão e um dashboard interativo. Os dados passam por camadas Raw, Bronze e
@@ -36,8 +42,10 @@ flowchart LR
     normalize --> bronze[(Bronze MySQL\nbronze_purchases)]
     bronze --> aggregate[Agregações SQL]
     aggregate --> silver[(Silver MySQL\nproduct, market e monthly stats)]
-    bronze --> dashboard[Dashboard Streamlit]
+    bronze --> dashboard[Streamlit]
     silver --> dashboard
+    bronze --> dash[Dashboard Dash]
+    silver --> dash
 ```
 
 ### Fluxo em seis etapas
@@ -50,8 +58,8 @@ flowchart LR
 4. **Bronze:** datas e valores são tipados, nomes são normalizados e quantidade,
    preço unitário e total da linha são reconciliados.
 5. **Silver:** consultas SQL recalculam estatísticas por produto, mercado e mês.
-6. **Consumo:** o Streamlit combina Bronze e Silver para montar listas,
-   indicadores, gráficos e editores.
+6. **Consumo:** o Streamlit e o Dash combinam Bronze e Silver para montar
+   listas, indicadores, gráficos e (no Streamlit) editores.
 
 ## Camadas de dados
 
@@ -70,7 +78,11 @@ recalculadas integralmente a partir da Bronze após cada alteração.
 
 ## Produto analítico
 
-| Página | Pergunta respondida |
+O Dash (em inglês) repete as quatro primeiras páginas — *Shopping list*,
+*Prices*, *Markets* e *Trends* — em modo somente leitura; importação e edição
+ficam no Streamlit.
+
+| Página (Streamlit) | Pergunta respondida |
 |---|---|
 | **Lista de Compras** | Quais produtos já ultrapassaram o intervalo médio de recompra? |
 | **Análise de Preços** | Como o preço de cada produto evoluiu e quais aumentos merecem atenção? |
@@ -95,7 +107,7 @@ recalculadas integralmente a partir da Bronze após cada alteração.
 
 | Responsabilidade | Tecnologias |
 |---|---|
-| Interface e visualização | Streamlit, Altair |
+| Interface e visualização | Streamlit, Altair, Dash, Plotly |
 | Processamento | Python, Pandas, NumPy |
 | OCR de notas fiscais | Google Gemini |
 | Persistência | MySQL, SQLAlchemy, PyMySQL |
@@ -137,12 +149,15 @@ O usuário MySQL precisa ter permissão para criar esses databases.
 
 ### Executar com uv
 
-```bash
-uv sync --frozen
-uv run streamlit run main.py
-```
+O repositório é um workspace uv: o backend compartilhado fica em
+`src/shopping_list` e cada interface é um membro em `app/<app>` com suas
+próprias dependências. Cada app roda a partir da própria pasta:
 
-A interface estará disponível em <http://localhost:8501>.
+```bash
+uv sync --all-packages --all-groups
+uv run --directory app/streamlit streamlit run main.py   # http://localhost:8501
+uv run --directory app/dash python main.py               # http://localhost:8050
+```
 
 ### Executar com Docker
 
@@ -150,7 +165,10 @@ A interface estará disponível em <http://localhost:8501>.
 docker compose up --build
 ```
 
-O Compose publica o Streamlit em <http://localhost:8502>. O MySQL não é
+O Compose sobe um container por app, cada um construído pelo próprio
+`app/<app>/Dockerfile`: o Streamlit em <http://localhost:8502> e o Dash em
+<http://localhost:8503> (portas alteráveis por `STREAMLIT_PORT` e `DASH_PORT`).
+O MySQL não é
 provisionado pelo Compose e deve estar acessível a partir do container pelo host
 informado em `MYSQL_HOST`.
 
@@ -175,20 +193,28 @@ versionados pelo projeto.
 
 ```text
 personal-shopping-list/
-├── main.py                  # aplicação e dashboard Streamlit
-├── src/
+├── src/shopping_list/       # backend compartilhado (sem framework de UI)
+│   ├── config.py            # caminhos do projeto e carga do .env
 │   ├── database.py          # conexões, criação e evolução dos databases
 │   ├── etl.py               # pipeline Raw → Bronze → Silver
 │   ├── gemini.py            # integração de OCR com o Gemini
+│   ├── loaders.py           # leitura das camadas Silver/Bronze em DataFrames
+│   ├── analytics.py         # alertas de preço, curva de recorrência, cores
 │   ├── models.py            # modelos SQLAlchemy
 │   └── query/               # agregações SQL da camada Silver
-├── template/
+├── app/
+│   ├── streamlit/           # app Streamlit (pyproject, Dockerfile, .streamlit/)
+│   │   ├── main.py
+│   │   └── src/shopping_list_streamlit/
+│   └── dash/                # dashboard Dash (pyproject, Dockerfile)
+│       ├── main.py
+│       └── src/shopping_list_dash/   # views, figures, layout, callbacks, assets/
+├── docs/template/
 │   ├── prompt.md            # regras de extração da nota fiscal
 │   └── response.json        # formato esperado da resposta do OCR
 ├── .env.example
-├── Dockerfile
-├── docker-compose.yml
-└── pyproject.toml
+├── docker-compose.yml       # sobe as duas aplicações
+└── pyproject.toml           # raiz do workspace + pacote do backend
 ```
 
 ## Qualidade

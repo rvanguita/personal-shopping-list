@@ -5,7 +5,7 @@ Manages connections to the 3 databases: raw, bronze, silver.
 
 import sqlalchemy
 
-from src.env import getenv
+from shopping_list.env import getenv
 
 USER = getenv("MYSQL_USER")
 PASSWORD = getenv("MYSQL_PASSWORD")
@@ -74,7 +74,7 @@ class DatabaseManager:
 
     def create_all_tables(self):
         """Cria todas as tabelas nos databases correspondentes."""
-        from src.models import (
+        from shopping_list.models import (
             BronzePurchase,
             RawPurchase,
             SilverMarketStats,

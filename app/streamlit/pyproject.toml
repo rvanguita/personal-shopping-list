@@ -1,0 +1,18 @@
+# app/streamlit/pyproject.toml — only this app's dependencies.
+[project]
+name = "shopping-list-streamlit"
+version = "0.1.0"
+description = "Streamlit app: receipt import, data editing and analytics (pt-BR)"
+requires-python = ">=3.13"
+dependencies = [
+    "shopping-list",
+    "altair>=6.2.2",
+    "streamlit>=1.61.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.0,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shopping-list = { workspace = true }

@@ -2,6 +2,8 @@
 
 import os
 
+import shopping_list.config  # noqa: F401  (carrega o .env)
+
 
 def getenv(name: str, default: str | None = None) -> str | None:
     """Como `os.getenv`, mas remove aspas simples/duplas ao redor do valor.

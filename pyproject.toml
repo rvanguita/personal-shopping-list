@@ -1,3 +1,5 @@
+# Workspace root AND the shared backend package `shopping_list` (src/shopping_list/).
+# Each frontend is a workspace member under app/ with its own pyproject and Dockerfile.
 [project]
 name = "shopping-list"
 version = "0.1.0"
@@ -5,20 +7,27 @@ description = "Intelligent grocery purchase tracking with receipt OCR and a meda
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "altair>=6.2.2",
     "google-genai>=2.17.0",
     "numpy>=2.5.2",
     "pandas>=3.0.5",
     "pymysql>=1.2.0",
     "python-dotenv>=1.2.2",
-    "ruff>=0.16.2",
     "sqlalchemy>=2.0.52",
-    "streamlit>=1.61.1",
 ]
-
-[project.scripts]
-shopping-list = "shopping_list:main"
 
 [build-system]
 requires = ["uv_build>=0.12.0,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.workspace]
+members = ["app/streamlit", "app/dash"]
+
+[dependency-groups]
+dev = ["ruff>=0.16.2"]
+
+[tool.ruff]
+target-version = "py313"
+src = ["src", "app/streamlit/src", "app/dash/src"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["shopping_list", "shopping_list_streamlit", "shopping_list_dash"]

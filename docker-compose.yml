@@ -1,10 +1,28 @@
+name: shopping-list
+
+# One service per app under app/, each built from its own Dockerfile with the repository root
+# as build context (both apps share src/ and docs/).
 services:
   streamlit:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: app/streamlit/Dockerfile
+    image: shopping-list-streamlit:latest
+    container_name: shopping-list-streamlit
+    restart: unless-stopped
     ports:
-      - "8502:8501"
+      - "${STREAMLIT_PORT:-8502}:8501"
     env_file:
-      ./.env
-    restart:  unless-stopped
+      - .env
+
+  dash:
+    build:
+      context: .
+      dockerfile: app/dash/Dockerfile
+    image: shopping-list-dash:latest
+    container_name: shopping-list-dash
+    restart: unless-stopped
+    ports:
+      - "${DASH_PORT:-8503}:8050"
+    env_file:
+      - .env

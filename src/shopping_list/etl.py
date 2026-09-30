@@ -8,7 +8,8 @@ from datetime import UTC, datetime
 import pandas as pd
 import sqlalchemy
 
-from src.database import DatabaseManager
+from shopping_list.config import QUERY_DIR
+from shopping_list.database import DatabaseManager
 
 
 class ETLPipeline:
@@ -17,7 +18,7 @@ class ETLPipeline:
     def __init__(self, db: DatabaseManager):
         self.db = db
 
-    def _read_sql_file(self, path: str) -> str:
+    def _read_sql_file(self, path) -> str:
         with open(path, "r") as f:
             return f.read()
 
@@ -134,7 +135,7 @@ class ETLPipeline:
         silver_engine = self.db.engine("silver")
 
         # --- Product Stats ---
-        query = sqlalchemy.text(self._read_sql_file("src/query/product_stats.sql"))
+        query = sqlalchemy.text(self._read_sql_file(QUERY_DIR / "product_stats.sql"))
         df_product = pd.read_sql(query, con=bronze_engine)
         if not df_product.empty:
             with silver_engine.connect() as conn:
@@ -148,7 +149,7 @@ class ETLPipeline:
             )
 
         # --- Market Stats ---
-        query = sqlalchemy.text(self._read_sql_file("src/query/market_stats.sql"))
+        query = sqlalchemy.text(self._read_sql_file(QUERY_DIR / "market_stats.sql"))
         df_market = pd.read_sql(query, con=bronze_engine)
         if not df_market.empty:
             with silver_engine.connect() as conn:
@@ -162,7 +163,7 @@ class ETLPipeline:
             )
 
         # --- Monthly Spending ---
-        query = sqlalchemy.text(self._read_sql_file("src/query/monthly_spending.sql"))
+        query = sqlalchemy.text(self._read_sql_file(QUERY_DIR / "monthly_spending.sql"))
         df_monthly = pd.read_sql(query, con=bronze_engine)
         if not df_monthly.empty:
             with silver_engine.connect() as conn:
